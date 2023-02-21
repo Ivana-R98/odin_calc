@@ -2,9 +2,10 @@ body {
     margin: 0;
     padding: 0;
     display: flex;
+    background-color: rgb(0, 19, 94);
     flex-direction: column;
     align-items: center;
-    color: #512d38;
+    color: #00c3ff;
     font-family: 'Sansita', sans-serif;
 }
 h1 {
@@ -14,8 +15,10 @@ h1 {
 
 main {
     padding: 1em;
-    border: 10px #f4bfdb solid;
-    background-color: #9ce7d1;
+    border: 10px cyan solid;
+    background: rgb(0,255,248);
+    background: linear-gradient(180deg, rgb(22, 220, 255) 0%,
+        rgb(68, 103, 240) 50%, rgb(37, 6, 121) 100%);
     border-radius: 25px;
     min-height: 350px;
     min-width: 350px;
@@ -23,9 +26,9 @@ main {
 
 .display {
     height: 75px;
-    background-color: #ffe9f3;
+    background-color: #bfeffd;
     margin: 5px 10px 25px;
-    border: 5px #f4bfdb solid;
+    border: 5px #00a2ff solid;
     border-radius: 15px;
     display: flex;
     flex-direction: column;
@@ -33,7 +36,7 @@ main {
 }
 .para {
     margin: 5px 10px 0px;
-    color: #512d38;
+    color: rgb(0, 21, 138);
     font-size: 28px;
     height:25px;
 }
@@ -72,11 +75,36 @@ button {
     font-size: 1.2em;
     width: 50px;
     height: 50px;
-    background-color: #ffe9f3;
-    border: 0.3em #f4bfdb solid;
-    color: #7c575f;
+    background-color: #bfeffd;
+    border: 0.3em #00aeff solid;
+    color: rgb(0, 21, 138);
 }
 button:hover {
     transform: scale(1.15);
-    border-color: #b27092;
+    border-color: cyan;
+}
+
+/* phone */
+@media screen and (max-width: 450px) {
+    main {
+        box-sizing:border-box;
+        max-width: 300px;
+        min-width: 300px;
+    }
+    .numbers {
+        margin-left: 0;
+    }
+    button {
+        padding: 5px 7px;
+        font-size: 1em;
+        height: 40px;
+        width: 40px;
+    }
+    .edit {
+        width: 90px;
+    }
+    .signs {
+        row-gap: 20px;
+        column-gap:  10px;
+    }
 }

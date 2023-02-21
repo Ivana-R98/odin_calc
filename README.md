@@ -16,5 +16,5 @@ The calculator project for TOP
 #### Add a clear button
     Pressing “clear” should wipe out any existing data
 #### Add a “backspace” button, so the user can undo if they click the wrong number.
-#### Add a . button and let users input decimals! Make sure you don’t let them type more than one though: 12.3.56.5
+#### Add a . button and let users input decimals! Make sure you don’t let them type more than one though
 #### Add keyboard support

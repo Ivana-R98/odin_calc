@@ -1,67 +1,91 @@
-let displayNum = document.querySelector("#display");
-let nr1, nr2;
-let num1 = 0, num2 = 0;
-let click = false;
-let plus = false;
-let minus = false;
-let time = false;
-let divide = false;
-let equal = false;
-let result;
-let count = 0;
-let dotclicked = 0; 
+//getting html elements
+const displayTop = document.getElementById("display");
+const displayBottom = document.getElementById("displayBottom");
 
+let operation = "";
+let displayedOperator = "";
+let result = 0;
+
+let operating = false;
+let timesOperated = 0;
+let dotclicked = 0;
 let dot = document.getElementById("dot");
-dot.disabled = true;
+let n1Arr = [];
+let n2Arr = [];
+let n1, n2;
+let equalclicked = false;
+let equal = document.getElementById("equal");
+    equal.disabled = true;
+    equal.addEventListener("click", () => { equalclicked = true;});
+    equal.addEventListener("click", operate);
 
-// display result
-let displayRes = document.getElementById("displayres");
-
-// selects all numbers
+// getting events for buttons
 const NUMBERS = document.querySelectorAll(".number");
 NUMBERS.forEach(number => {
-    number.addEventListener("click", displayVal)
+    number.addEventListener("click", getValue)
+});
+const OPERATORS = document.querySelectorAll(".operator");
+OPERATORS.forEach(operator => {
+    if(!n1) operator.disabled = true;
+})
+OPERATORS.forEach(operator => {
+    operator.addEventListener("click", (e) => {  
+        operating = true;
+        if(dotclicked > 0) dotclicked--;
+        dot.disabled = false;
+        if(operation === "") timesOperated++;
+        if (e.target.id === "plus")  { 
+            if(timesOperated !== 0 && n2 !== undefined) operate();       
+            operation = "add";   
+        }
+        else if (e.target.id === "minus")  {  
+            if(timesOperated !== 0 && n2 !== undefined) operate();
+            operation = "subtract";  
+        }
+        else if (e.target.id === "multiply")  {  
+            if(timesOperated !== 0 && n2 !== undefined) operate();
+            operation = "multiply";  
+        }
+        else if (e.target.id === "divide")  {  
+            if(timesOperated !== 0 && n2 !== undefined  && n2 !== 0) operate();
+            operation = "divide"; 
+        }
+        displayedOperator = e.target.textContent;
+        displayTop.textContent = `${n1} ${displayedOperator} `;
+        console.log("times: ", timesOperated)
+    })
 });
 
-//gets first number
-let arrnum1 = [];
-let arrnum2 = [];
-function displayVal(e) {
-    if (click === false) {
-        if (arrnum1.length === 0){
-            dot.disabled = false;
-        }
-        arrnum1.push(e.target.textContent);
-        if(e.target.id === "dot") {
+//getting and displaying values
+function getValue(e) {
+    if(operating === false) {
+        OPERATORS.forEach(operator => { operator.disabled = false;})
+        if(e.target.textContent === ".") {
             dotclicked++;
-            if(dotclicked >= 1) {
-                dot.disabled = true;
-            }
         }
-        nr1 = arrnum1.join("");
-        displayNum.textContent = nr1;
-        num1 = Number(nr1);
-        return num1;
+        dotclicked > 0 ? dot.disabled = true : dot.disabled = false;
+        n1Arr.push(e.target.textContent);
+        n1 = Number(n1Arr.join(""));
+        displayTop.textContent = `${n1Arr.join("")}`;
+        OPERATORS.disabled = false;
+        return n1;
     }
-    if (arrnum2.length === 0){
-        dot.disabled = false;
-    }
-    if (click === true) {
-        arrnum2.push(e.target.textContent);
-        if(e.target.id === "dot") {
+    if (operating === true) {
+        if(e.target.textContent === ".") {
             dotclicked++;
-            if(dotclicked >= 1) {
-                dot.disabled = true;
-            }
         }
-        nr2 = arrnum2.join("");
-        displayNum.textContent = nr2;
-        num2 = Number(nr2);
-        return num2;
-    }   
+        dotclicked > 0 ? dot.disabled = true : dot.disabled = false;
+        n2Arr.push(e.target.textContent);
+        console.log(dotclicked)
+        n2 = Number(n2Arr.join(""));
+        displayTop.textContent = `${n1} ${displayedOperator} ${n2Arr.join("")}`;
+        equal.disabled = false;
+        return n2;
+    }
 }
 
-// on click clear, reloads calculator
+
+//clear btn
 const CLEAR = document.getElementById("clear").
 addEventListener("click", () => {
     document.location.reload();
@@ -69,111 +93,79 @@ addEventListener("click", () => {
 
 // on del, deletes last number
 const DEL = document.getElementById("del").
-addEventListener("click", (e) => {
-    if(click === false) {
-        arrnum1.pop();
-        if(e.target.id === "dot"){
-            dotclicked--;
-        }
-        console.log(arrnum1);
-        nr1 = arrnum1.join("");
-        displayNum.textContent = nr1;
-        num1 = Number(nr1);
-        return num1;
-    }
-    else if(click === true) {
-        arrnum2.pop();
-        if(e.target.id === "dot"){
-            dotclicked--;
-        }
-        console.log(arrnum2);
-        nr2 = arrnum2.join("");
-        displayNum.textContent = nr2;
-        num2 = Number(nr2);
-        return num2;
-    }
-});
-
-// selects all operators
-const OPERATORS = document.querySelectorAll(".operator");
-OPERATORS.forEach(operator => {
-    operator.addEventListener("click", (e) => { 
-        show = e.target.textContent; 
-        displayNum.textContent = show;    
-        click = true;
-        if (e.target.id === "plus")  plus = true;
-        else if (e.target.id === "minus")   minus = true;
-        else if (e.target.id === "times")   time = true;
-        else if (e.target.id === "divide")  divide = true; 
-    })
-});
-
-const EQUAL = document.getElementById("equal").
 addEventListener("click", () => {
-    equal = true;
-    operate(num1, num2);
+    if(operating === false) {
+        if(n1Arr[n1Arr.length-1] === '.') {
+            dotclicked--;
+        }
+        n1Arr.pop();
+        n1 = Number(n1Arr.join(""));
+        console.log(n1);
+        displayTop.textContent = `${n1Arr.join("")}`;
+        return n1;
+    }
+    else if(operating === true)  {
+        equal.disabled = false;
+        if(n2Arr[n2Arr.length-1] === '.') {
+            dotclicked--;
+            dot.disabled = false;
+        }
+        n2Arr.pop();
+        n2 = Number(n2Arr.join(""));
+        displayTop.textContent = `${n1} ${displayedOperator} ${n2Arr.join("")}`;
+        return n2;
+    }
 });
 
-function operate (num1, num2) {
-    let number1;
-    if(count === 0) {
-        number1 = +num1;
-    }
-    else if(count > 0) {
-        number1 = +result;
-    }
-    let number2 = +num2;
-    if(equal === true) {
-        if(plus === true) {
-            result = number1 + number2;
-            plus = false;
-            displayNum.classList.add("a");
-            displayNum.textContent = `${number1} + ${number2}`;
-        }
-        if(minus === true){
-            result = number1 - number2;
-            minus = false;
-            displayNum.classList.add("a");
-            displayNum.textContent = `${number1} - ${number2}`;
-        }
-        if(time === true) {
-            result = number1 * number2;
-            time = false;
-            displayNum.classList.add("a");
-            displayNum.textContent = `${number1} * ${number2}`;
-        }
-        if(divide === true) {
-            result = number1 / number2;
-            if(Number.isInteger(result) === false) {
-                result = result.toFixed(2);
-            }
-            if(number2 === 0) {
-                result = "KEKW";
-                displayNum.classList.add("a");
-                displayNum.textContent = `${number1} ÷ ${number2}`;
-                displayRes.textContent = result;
-                return;
-            }
-            divide = false;
-            displayNum.classList.add("a");
-            displayNum.textContent = `${number1} ÷ ${number2}`;
-        } 
-        if (dotclicked > 0) {
-            if(Number.isInteger(result) === false) {
-                displayRes.textContent = result;
-                num1 = result.toFixed(2);
-            }
-            else {
-                displayRes.textContent = result;
-                num1 = result.toFixed(2); 
-            }
-        }
-        else {
-            displayRes.textContent = +result;
-            num1 = +result;
-        }
-        arrnum2 = [];
-        equal = false;
-        count++;
-    }
+// functions for math operations
+function adding(a, b) {
+    return result = a + b; 
 }
+
+function subtracting(a, b) {
+    return result = a - b;
+}
+
+function multiplying(a, b) {
+    return result = a * b;
+}
+
+function dividing(a, b) {
+    if (n2 === 0) {
+        result = "kekw";
+        return;
+    }
+    return result = a / b;
+}
+
+// operate
+function operate() {  
+    if(operation === "add") adding(n1, n2);
+    else if(operation === "subtract") subtracting(n1, n2);
+    else if(operation === "multiply") multiplying(n1, n2);
+    else if(operation === "divide") dividing(n1, n2);
+    displayTop.textContent = `${n1} ${displayedOperator} ${n2}`;
+    displayBottom.textContent = `${result}`;
+    operation = "";
+    if(equalclicked === true) {
+        operating = false;
+        displayTop.textContent = `${n1} ${displayedOperator} ${n2}`;
+        displayBottom.textContent = `${result}`;
+        n1Arr = [];
+        n2Arr = [];
+        n2 = undefined;
+        equalclicked = false;
+    }
+    else {
+    displayTop.textContent = `${n1} ${displayedOperator} ${n2}`;
+    displayBottom.textContent = `${result}`;
+    n1Arr = result.toString().split("");
+    operating = true;
+    n2Arr = [];
+    n2 = undefined;
+    }
+    n1 = result;
+    equal.disabled = true;
+    console.log(n1Arr, n2, n1, operation);
+}
+
