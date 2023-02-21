@@ -47,7 +47,7 @@ OPERATORS.forEach(operator => {
             operation = "multiply";  
         }
         else if (e.target.id === "divide")  {  
-            if(timesOperated !== 0 && n2 !== undefined  && n2 !== 0) operate();
+            if(timesOperated !== 0 && n2 !== undefined) operate();
             operation = "divide"; 
         }
         displayedOperator = e.target.textContent;
@@ -76,7 +76,6 @@ function getValue(e) {
         }
         dotclicked > 0 ? dot.disabled = true : dot.disabled = false;
         n2Arr.push(e.target.textContent);
-        console.log(dotclicked)
         n2 = Number(n2Arr.join(""));
         displayTop.textContent = `${n1} ${displayedOperator} ${n2Arr.join("")}`;
         equal.disabled = false;
@@ -119,23 +118,23 @@ addEventListener("click", () => {
 
 // functions for math operations
 function adding(a, b) {
-    return result = a + b; 
+    return result = +a + +b; 
 }
 
 function subtracting(a, b) {
-    return result = a - b;
+    return result = +a - +b;
 }
 
 function multiplying(a, b) {
-    return result = a * b;
+    return result = +a * +b;
 }
 
 function dividing(a, b) {
     if (n2 === 0) {
-        result = "kekw";
+        displayBottom.textContent = "Kekw";
         return;
     }
-    return result = a / b;
+    return result = +a / +b;
 }
 
 // operate
@@ -143,7 +142,12 @@ function operate() {
     if(operation === "add") adding(n1, n2);
     else if(operation === "subtract") subtracting(n1, n2);
     else if(operation === "multiply") multiplying(n1, n2);
+    else if(operation === "divide" && n2 === 0) { 
+        displayBottom.textContent = "Cannot divide with 0"; 
+        return;
+    }
     else if(operation === "divide") dividing(n1, n2);
+    if(!Number.isInteger(result)) result = Number(result).toFixed(2);
     displayTop.textContent = `${n1} ${displayedOperator} ${n2}`;
     displayBottom.textContent = `${result}`;
     operation = "";
